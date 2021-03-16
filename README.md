@@ -21,9 +21,6 @@ plt.imshow(cv2.cvtColor(image, cv2.COLOR_BG))
 ```
 ![image](https://user-images.githubusercontent.com/26111880/111388623-a0de2080-86d5-11eb-8889-609d1d08346f.png)
 
-### Gray Image
-![image](https://user-images.githubusercontent.com/26111880/111389247-a7b96300-86d6-11eb-94ff-bef19bf6cf44.png)
-
 We are going to detect the edges of the image.<br>
 Edge Detection - Identifying sharp changes in intensity in adjacent pixels <br>
 1. Convert RGB image to grey scale to reduce the computational complexity
@@ -41,7 +38,7 @@ lane_image = np.copy(image)
 canny_image = canny(lane_image)
 plt.imshow(cv2.cvtColor(canny_image, cv2.COLOR_BGR2RGB))
 ```
-![image](https://user-images.githubusercontent.com/26111880/111389329-cae41280-86d6-11eb-955c-397a6071c35f.png)
+![image](https://user-images.githubusercontent.com/26111880/111389247-a7b96300-86d6-11eb-94ff-bef19bf6cf44.png)![image](https://user-images.githubusercontent.com/26111880/111389329-cae41280-86d6-11eb-955c-397a6071c35f.png)
 
 
 
