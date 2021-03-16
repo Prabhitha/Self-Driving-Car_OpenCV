@@ -40,7 +40,7 @@ plt.imshow(cv2.cvtColor(canny_image, cv2.COLOR_BGR2RGB))
 ```
 ![image](https://user-images.githubusercontent.com/26111880/111389247-a7b96300-86d6-11eb-94ff-bef19bf6cf44.png)![image](https://user-images.githubusercontent.com/26111880/111389329-cae41280-86d6-11eb-955c-397a6071c35f.png)
 
-Create a black image with the shape of the original image (Array of zeros) - Mask image and Fill the mask image with our lane in white color
+Create a black image with the shape of the original image (Array of zeros) and fill the mask image with our lane in white color<br>
 ```
 def region_of_interest(image): 
     height = image.shape[0] 
@@ -71,7 +71,7 @@ HoughLinesP<br>
 ```
 lines = cv2.HoughLinesP(cropped_image,2, np.pi/180,100,np.array([]),minLineLength = 40,maxLineGap = 5)
 
-# Displaying thr lines in a black image
+# Displaying the lines in a black image
 def display_lines(image, lines):
     line_image = np.zeros_like(image)
     if lines is not None: # to check if any line is detected, lines- 3-d array
@@ -86,16 +86,15 @@ plt.imshow(cv2.cvtColor(line_image, cv2.COLOR_BGR2RGB))
 ```
 ![image](https://user-images.githubusercontent.com/26111880/111393506-e521ee80-86de-11eb-9048-397f9b033d4e.png)
 
+To blend the line with the original image
 ```
-# To blend the line with the original image
-
 combo_image = cv2.addWeighted(lane_image,0.8,line_image,1,1) 
 plt.imshow(cv2.cvtColor(combo_image, cv2.COLOR_BGR2RGB))
 ```
 ![image](https://user-images.githubusercontent.com/26111880/111393532-f0751a00-86de-11eb-805b-bed046ceca29.png)
 
-Changing multiple lines in the lane to single line - Optimization
-Get the slope and y-intercept of all the lines, average them and create a new line.
+Changing multiple lines in the lane to single line - Optimization<br>
+Get the slope and y-intercept of all the lines, average them and create a new line.<br>
 polyfit- fits a 1st degree polynomial(y= mx+b)
 
 ```
