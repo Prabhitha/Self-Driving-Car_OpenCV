@@ -4,11 +4,20 @@ OpenCV (Open Source Computer Vision Library) is a library of programming functio
 It mainly focuses on image processing, video capture and analysis including features like face detection and object detection.<br>
 To install OpenCV- pip install opencv-python
 
-![image](https://user-images.githubusercontent.com/26111880/111380253-180db780-86ca-11eb-9d15-1dcf0f095e0e.png)
-
-### Importing the libraries
 ```
+# Importing the libraries
 import cv2 # Dataset
 import numpy as np
 import matplotlib.pyplot as plt
 ```
+```
+# load the image
+path = r'C:\Users\Prabhitha Nagarajan\Desktop\finding-lanes\test_image.jpg'
+image = cv2.imread(path)
+  
+# Displaying the image 
+plt.imshow(image)
+plt.title("Test Image")
+plt.show
+```
+![image](https://user-images.githubusercontent.com/26111880/111380253-180db780-86ca-11eb-9d15-1dcf0f095e0e.png)
