@@ -3,15 +3,40 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+def make_coordinates(image,line_parameters):
+    slope, intercept = line_parameters
+    y1 = image.shape[0] # Image shape: (704,1279,3), y1= 704
+    y2 = int(y1*(3/5)) # y2= 422.4
+    x1 = int((y1-intercept)/slope)
+    x2 = int((y2-intercept)/slope)
+    return np.array([x1,y1,x2,y2])
+
+def average_slope_intercept(image,lines):
+    left_fit = []
+    right_fit = []
+    for line in lines:
+        x1, y1, x2, y2 = line.reshape(4)
+        parameters = np.polyfit((x1,x2),(y1,y2), 1) # To get the slope and y-intercept, polyfit- fits a 1st degree polynomial(y= mx+b)
+        slope = parameters[0]
+        intercept = parameters[1]
+        if slope < 0:
+            left_fit.append((slope,intercept))
+        else:
+            right_fit.append((slope,intercept))
+    left_fit_average = np.average(left_fit, axis=0) # Calculate average slope and y-intercept vertically
+    right_fit_average = np.average(right_fit, axis=0)
+    left_line = make_coordinates(image,left_fit_average) # To get the coordinates to draw the line
+    right_line = make_coordinates(image,right_fit_average)
+    return np.array([left_line,right_line])
+
 def canny(image):
-    gray = cv2.cvtColor(lane_image,cv2.COLOR_RGB2GRAY) # Converting a color image to gray image to reduce computational complexity
+    gray = cv2.cvtColor(image,cv2.COLOR_RGB2GRAY) # Converting a color image to gray image to reduce computational complexity
     blur = cv2.GaussianBlur(gray,(5,5),0) # To reduce noise and smoothen the image
     canny = cv2.Canny(blur,50,150) # To detect the edges of the image using canny fn
     return canny
 
 def display_lines(image, lines):
     line_image = np.zeros_like(image)
-    line_image = cv2.cvtColor(line_image,cv2.COLOR_GRAY2RGB)
     if lines is not None: # to check if any line is detected, lines- 3-d array
         for line in lines:
             x1, y1, x2, y2 = line.reshape(4)
@@ -30,18 +55,12 @@ def region_of_interest(image): # Detect the lanes(enclosed region):
 
 image = cv2.imread('test_image.jpg')
 lane_image = np.copy(image)
-canny = canny(lane_image)
-cropped_image = region_of_interest(canny)
-# HoughLinesP
-# 1st param- Image where we want to look at the lines
-# 2nd and 3rd param - Specify the resolution of half accumulator array (2 dim array/grid which has the max votes of intersection
-# It specify the size of the bins, 2 pixels and 1-degree precision (pi/180)
-# 4th param- Threshold - minimum no of votes needed to accept a candidate line.
-# 5th param - placeholder array (Empty array)
-# 6th param -Length of the line in pixels that we accept into the output
-# 7th param -max dist in pixels between segmented lines which we allow to be connected into single line instead of them broken up
+canny_image = canny(lane_image)
+cropped_image = region_of_interest(canny_image)
 lines = cv2.HoughLinesP(cropped_image,2, np.pi/180,100,np.array([]),minLineLength = 40,maxLineGap = 5)
-line_image = display_lines(cropped_image, lines)
+# Changing multiple lines in the lane to single line - Optimization
+average_lines = average_slope_intercept(lane_image, lines)
+line_image = display_lines(lane_image, average_lines)
 combo_image = cv2.addWeighted(lane_image,0.8,line_image,1,1) # To blend the line with the original image, pixel intensity
 #cv2.imshow('result',canny)
 cv2.imshow('result',combo_image)
