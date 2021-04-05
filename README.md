@@ -137,6 +137,27 @@ plt.imshow(cv2.cvtColor(combo_image, cv2.COLOR_BGR2RGB))
  ```
 ![image](https://user-images.githubusercontent.com/26111880/111393651-27e3c680-86df-11eb-8c0c-a3685858a226.png)
 
+### Capture Lanes from videos
+We are going to decode every video frame -> It will result in multiple images, we will then apply the above lane detection funtion on top of that
+
+```
+cap = cv2.VideoCapture("test2.mp4")
+while(cap.isOpened()):
+    _, frame = cap.read() # To decode every video frame
+    canny_image = canny(frame)
+    cropped_image = region_of_interest(canny_image)
+    lines = cv2.HoughLinesP(cropped_image,2, np.pi/180,100,np.array([]),minLineLength = 40,maxLineGap = 5)
+    average_lines = average_slope_intercept(frame, lines)
+    line_image = display_lines(frame, average_lines)
+    combo_image = cv2.addWeighted(frame,0.8,line_image,1,1)
+    cv2.imshow('result',combo_image)
+    #cv2.waitKey(1) - wait 1ms in between frames
+    if cv2.waitKey(1) == ord('q'):
+        break
+cap.release()
+cv2.destroyAllWindows()
+```
+
 
 
 
